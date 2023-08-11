@@ -19,8 +19,8 @@ const config = {
 		}),
 		// This ensures relative paths are used, needed for GitHub Pages
 		paths: {
-			base: '/sveltememorygame.github.io',
-			assets: '/sveltememorygame.github.io'
+			base: '',
+			assets: ''
 		}
 	}
 }
