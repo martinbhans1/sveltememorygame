@@ -14,7 +14,7 @@ const config = {
 		adapter: adapter(),
 		// This ensures relative paths are used, needed for GitHub Pages
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/sveltememorygame.github.io' : '',
+			base: '',
 			assets: ''
 		}
 	}
