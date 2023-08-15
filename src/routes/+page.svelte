@@ -1,20 +1,27 @@
 <script lang="ts">
 	import { category, type CategoryKey } from './category'
 
-	let categories = Object.keys(category) // This will give us ["animals", "celebrities", ...]
+	let categories = Object.keys(category) as CategoryKey[]
 	let selectedCategory: CategoryKey = 'animals' // default to the first category
+	let items = category[selectedCategory].items
 
 	type State = 'start' | 'playing' | 'paused' | 'won' | 'lost'
 
 	let state: State = 'start'
-	let size = 10
+	let size: number = 10
 	let grid = createGrid()
 	let maxMatches = grid.length / 2
 	let selected: number[] = []
 	let matches: string[] = []
 	let timerId: number | null = null
-    let DEFAULT_TIME = 600
+	let DEFAULT_TIME = 600
 	let time = DEFAULT_TIME
+
+	function formatTime(seconds) {
+		const minutes = Math.floor(seconds / 60)
+		const remainingSeconds = seconds % 60
+		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+	}
 
 	function startGameTimer() {
 		function countdown() {
@@ -29,8 +36,8 @@
 		let maxSize = size / 2
 
 		while (cards.size < maxSize) {
-			const randomIndex = Math.floor(Math.random() * category[selectedCategory].length)
-			cards.add(category[selectedCategory][randomIndex])
+			const randomIndex = Math.floor(Math.random() * category[selectedCategory].items.length)
+			cards.add(category[selectedCategory].items[randomIndex])
 		}
 
 		return shuffle([...cards, ...cards])
@@ -99,6 +106,27 @@
 		}
 	}
 
+	function incrementDifficulty() {
+		if (size < 20) {
+			size += 2
+		}
+	}
+
+	function decrementDifficulty() {
+		if (size > 4) {
+			size -= 2
+		}
+	}
+
+	function handleSizeChange() {
+		if (size % 2 !== 0) {
+			alert('Please enter an even number')
+			// Reverting back to a valid even size or you can set to a default value.
+			size -= 1
+		}
+		resetGame()
+	}
+
 	$: if (state === 'playing') {
 		!timerId && startGameTimer()
 	}
@@ -109,9 +137,6 @@
 	$: if (selectedCategory) {
 		grid = createGrid()
 	}
-
-	$: console.log({ state, selected, matches })
-	$: console.log('Selected category: ', selectedCategory)
 </script>
 
 <svelte:window on:keydown={pauseGame} />
@@ -124,15 +149,29 @@
 	<h1>Matching Game</h1>
 	<!-- Let the user select a category -->
 	<select bind:value={selectedCategory} on:change={resetGame} class="dropdown">
-		{#each categories as category}
-			<option value={category}>{category}</option>
+		{#each Object.keys(category) as categoryKey (categoryKey)}
+			<option class="dropdown-content" value={categoryKey}
+				>{category[categoryKey].displayName}</option
+			>
 		{/each}
 	</select>
-	<button on:click={() => (state = 'playing')}>Start</button>
+	<!-- Let the user select a difficulty -->
+	<div class="difficulty-div">
+		<label for="difficulty">Difficulty</label>
+
+		<div class="difficulty-input-div">
+			<button class="minus" on:click={decrementDifficulty}>-</button>
+			<input type="number" class="difficulty" bind:value={size} on:change={handleSizeChange} />
+
+			<button class="plus" on:click={incrementDifficulty}>+</button>
+		</div>
+	</div>
+
+	<button class="play-button" on:click={() => (state = 'playing')}>Play</button>
 {/if}
 
 {#if state === 'playing'}
-	<h1 class="timer" class:pulse={time < 10}>{time}</h1>
+	<h1 class="timer" class:pulse={time < 10}>{formatTime(time)}</h1>
 
 	<div class="matches">
 		{#each matches as match}
@@ -153,7 +192,7 @@
 			{@const match = matches.includes(card)}
 
 			<button
-				class="card"
+				class="card button"
 				class:selected={isSelected}
 				class:flip={isSelectedOrMatch}
 				disabled={isSelectedOrMatch}
@@ -173,81 +212,10 @@
 
 {#if state === 'lost'}
 	<h1>You Lost</h1>
-	<button on:click={() => (state = 'playing')}>Play Again</button>
+	<button class="play-button" on:click={() => (state = 'playing')}>Play Again</button>
 {/if}
 
 {#if state === 'won'}
 	<h1>You Won!</h1>
-	<button on:click={() => (state = 'playing')}>Play Again</button>
+	<button class="play-button" on:click={() => (state = 'playing')}>Play Again</button>
 {/if}
-
-<style>
-	.cards {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 0.4rem;
-	}
-
-	.card {
-		height: 140px;
-		width: 140px;
-		font-size: 4rem;
-		background-color: var(--bg-2);
-		transition: rotate 0.5s ease-out;
-		transform-style: preserve-3d;
-
-		&.selected {
-			border: 4px solid var(--border);
-		}
-
-		&.flip {
-			rotate: y 180deg;
-			pointer-events: none;
-		}
-
-		& .back {
-			position: absolute;
-			inset: 0;
-			display: grid;
-			place-content: center;
-			backface-visibility: hidden;
-			rotate: y 180deg;
-		}
-
-		&.match {
-			transition: opacity 0.3s ease-out;
-			opacity: 0.4;
-		}
-	}
-
-	.matches {
-		display: flex;
-		gap: 1rem;
-		margin-block: 2rem;
-		font-size: 3rem;
-	}
-
-	.timer {
-		transition: color 0.3s ease;
-	}
-
-	.pulse {
-		color: var(--pulse);
-		animation: pulse 1s infinite;
-	}
-
-	.dropdown {
-		margin-bottom: 6rem;
-		margin-top: 3rem;
-		padding: 0.5rem;
-		text-align: center;
-		font-size: 2rem;
-		font-weight: bold;
-	}
-
-	@keyframes pulse {
-		to {
-			scale: 1.4;
-		}
-	}
-</style>
