@@ -1,9 +1,10 @@
 <script lang="ts">
     import '../app.css'
+    
 </script>
 
 <svelte:head>
-    <title>Memory Matching Game</title>
+    <title>Huskespill</title>
 </svelte:head>
 
 <slot />

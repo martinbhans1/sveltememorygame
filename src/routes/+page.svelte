@@ -1,9 +1,17 @@
 <script lang="ts">
 	import { category, type CategoryKey } from './category'
+  	import AudioPlayer from '../AudioPlayer.svelte';
+	import SettingsModal from '../SettingsModal.svelte';
+	import Icon from '@iconify/svelte';
+	
+	let showModal = false;
 
+	let audioPlayer;
 	let categories = Object.keys(category) as CategoryKey[]
 	let selectedCategory: CategoryKey = 'animals' // default to the first category
 	let items = category[selectedCategory].items
+
+	let volume = 0.5
 
 	type State = 'start' | 'playing' | 'paused' | 'won' | 'lost'
 
@@ -43,25 +51,15 @@
 		return shuffle([...cards, ...cards])
 	}
 
-	// function createGrid() {
-	//     let cards = new Set<string>()
-	//     let maxSize = size / 2
-
-	//     while (cards.size < maxSize) {
-	//         const randomIndex = Math.floor(Math.random() * category.length)
-	//         cards.add(category[randomIndex])
-	//     }
-
-	//     return shuffle([...cards, ...cards])
-	// }
-
 	function shuffle<Items>(array: Items[]) {
 		return array.sort(() => Math.random() - 0.5)
 	}
 
 	function selectCard(cardIndex: number) {
-		selected = selected.concat(cardIndex)
-	}
+    selected = selected.concat(cardIndex);
+    audioPlayer.play();
+}
+
 
 	function matchCards() {
 		const [first, second] = selected
@@ -121,12 +119,12 @@
 	function handleSizeChange() {
 		if (size % 2 !== 0) {
 			alert('Please enter an even number')
-			// Reverting back to a valid even size or you can set to a default value.
 			size -= 1
 		}
 		resetGame()
 	}
 
+	$: size;
 	$: if (state === 'playing') {
 		!timerId && startGameTimer()
 	}
@@ -137,6 +135,9 @@
 	$: if (selectedCategory) {
 		grid = createGrid()
 	}
+
+	
+	
 </script>
 
 <svelte:window on:keydown={pauseGame} />
@@ -185,7 +186,15 @@
 		{/each}
 	</div>
 
+	<iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
+	<button on:click={() => (showModal = true)}>Settings</button>
+	<SettingsModal bind:showModal />
+
+
+<AudioPlayer bind:this={audioPlayer} src="/sounds/card-flip.mp3" initialVolume={volume} />
+
 	<div class="cards">
+		
 		{#each grid as card, cardIndex}
 			{@const isSelected = selected.includes(cardIndex)}
 			{@const isSelectedOrMatch = selected.includes(cardIndex) || matches.includes(card)}

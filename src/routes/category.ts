@@ -1,4 +1,4 @@
-export type CategoryKey = 'animals' | 'food' | 'noahCelebs' // add more as needed
+export type CategoryKey = 'animals' | 'food' | 'noahCelebs' | 'noahFamily' // add more as needed
 
 export const category: Record<CategoryKey, { items: string[]; displayName: string }> = {
 	animals: {
@@ -119,7 +119,7 @@ export const category: Record<CategoryKey, { items: string[]; displayName: strin
 			'🐿',
 			'🦔'
 		],
-		displayName: 'Animals'
+		displayName: 'Dyr'
 	},
 
 	food: {
@@ -158,21 +158,35 @@ export const category: Record<CategoryKey, { items: string[]; displayName: strin
 			'🍟',
 			'🍕'
 		],
-		displayName: 'Food'
+		displayName: 'Mat'
 	},
 
 	noahCelebs: {
 		items: [
-			'/images/bjarnis.jpg',
-			'/images/blippi.jpg',
-			'/images/meekah.jpg',
-			'/images/carl.jpg',
-			'/images/fantus.jpg',
-			'/images/gecko.jpg',
-			'/images/leo.jpg',
-			'/images/mrmonkey.jpg',
-			'/images/teletubbies.jpg'
+			'/images/noahcelebs/bjarnis.jpg',
+			'/images/noahcelebs/blippi.jpg',
+			'/images/noahcelebs/meekah.jpg',
+			'/images/noahcelebs/carl.jpg',
+			'/images/noahcelebs/fantus.jpg',
+			'/images/noahcelebs/gecko.jpg',
+			'/images/noahcelebs/leo.jpg',
+			'/images/noahcelebs/mrmonkey.jpg',
+			'/images/noahcelebs/teletubbies.jpg'
 		],
-		displayName: 'Noah'
+		displayName: 'TV-figurer'
+	},
+
+	noahFamily: {
+		items: [
+			'/images/noahfamily/pappa.jpg',
+			'/images/noahfamily/mamma.jpg',
+			'/images/noahfamily/bestemor.jpg',
+			'/images/noahfamily/bestefar.jpg',
+			'/images/noahfamily/mor.jpg',
+			'/images/noahfamily/far.jpg',
+			'/images/noahfamily/mommo.jpg',
+			'/images/noahfamily/noah.jpg'
+		],
+		displayName: 'Familie'
 	}
 }

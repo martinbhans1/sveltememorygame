@@ -216,13 +216,47 @@ h1 + .button {
 		}
 	}
 
+	#volume {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		margin-top: 0.1rem;
+	}
+
+
+    .modal {
+        /* display: {open ? 'block' : 'none'}; */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(26, 25, 25, 0.7);
+		z-index: 100;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 30%;
+    }
+
 
 	/* Mobile styles */
 @media only screen and (max-width: 600px) {
-    /* Mobile-specific styles here */
+	.cards {
+    display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		}
 }
 
 /* Tablet styles */
 @media only screen and (min-width: 601px) and (max-width: 1024px) {
-    /* Tablet-specific styles here */
+    .cards {
+    display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		}
 }
+
